@@ -7,18 +7,24 @@ import socket
 from optparse import OptionParser
 
 def getURL(WebServer,Port,URL):
-  try:
-    ConnectionString = ("http://%s:%s%s") % (WebServer, Port, URL)
-    conn = urllib.urlopen(ConnectionString)
-    URLresponse = conn.read()
-    conn.close()
-    return URLresponse
+    try:
+        # Setup connection string
+        ConnectionString = ("http://%s:%s%s") % (WebServer, Port, URL)
 
-  except:
-    print "Error getting URL"
+        conn = urllib.urlopen(ConnectionString)
+        URLresponse = conn.read()
 
+        # Clean up the connection
+        conn.close()
+
+        # The response to the function is the output of the URL called
+        return URLresponse
+
+    # Catch all exceptions
+    except:
+        print "Error getting URL"
+#flags=(re.IGNORECASE|re.DOTALL)
 def get_metric(status_page, reg_base, flags=(re.IGNORECASE)):
-  #flags=(re.IGNORECASE|re.DOTALL)
   reg_comile = re.compile(reg_base, flags)
   match = reg_comile.search(status_page)
   if match:
@@ -30,15 +36,15 @@ if __name__ == "__main__":
 
   parser = OptionParser()
 
-  parser.add_option("-u", "--url",     action='store', type='string',  dest='url',     default="127.0.0.1", help="url for stat page (127.0.0.1)")
-  parser.add_option("-s", "--stat",    action='store', type='string',  dest='stat',    default="/srv-stat?auto", help="status page exact name (/srv-stat?auto)")
-  parser.add_option("-p", "--port",    action='store', type='int',     dest='port',    default=80, help="port(80)")
-  parser.add_option("-t", "--timeout", action='store', type='int',     dest='timeout', default=5, help="timeout (5)")
+  parser.add_option("-u", "--url",     action='store', type='string',  dest='url',     default="127.0.0.1", help="url")
+  parser.add_option("-s", "--stat",    action='store', type='string',  dest='stat',    default="/server-status?auto", help="status page url")
+  parser.add_option("-p", "--port",    action='store', type='int',     dest='port',    default=80, help="port")
+  parser.add_option("-t", "--timeout", action='store', type='int',     dest='timeout', default=5, help="timeout")
   parser.add_option("-m", "--metric",  action='store', type='string',  dest='metric',  default="", help="metrics name")
-  parser.add_option("-o", "--out",     action='store', type='string',  dest='out',     default="stdout", help="stdout(default), file .. output to file")
-  parser.add_option("-r", "--print",   action='store', type='string',  dest='pr_val',  default="value", help="value(default) .. print just value by metric, all .. print whole stat page")
-  parser.add_option("-i", "--inp",     action='store', type='string',  dest='inp',     default="web", help="Source of data: file, web(default)")
-  parser.add_option("-f", "--file",    action='store', type='string',  dest='fl_name', default="/usr/share/zabbix/tmp/apache_stat", help="file name")
+  parser.add_option("-o", "--out",     action='store', type='string',  dest='out',     default="stdout", help="stdout, file")
+  parser.add_option("-r", "--print",   action='store', type='string',  dest='pr_val',  default="value", help="value, all")
+  parser.add_option("-i", "--inp",     action='store', type='string',  dest='inp',     default="web", help="file, web")
+  parser.add_option("-f", "--file",    action='store', type='string',  dest='fl_name', default="/tmp/apache_stat", help="file name")
 
   (options, args) = parser.parse_args()
   url = options.url
@@ -101,3 +107,4 @@ if __name__ == "__main__":
     output = status_page
 
   print output
+
